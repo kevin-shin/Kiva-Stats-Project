@@ -33,52 +33,52 @@ loans %>%
   geom_density()
 ```
 
+This visualization represents the distribution of our response variable, `funded_amount`. From the density plot, we can see that most loans are provided for about \$500-1300, but the distribution is right-skewed which tells us that there are some people/groups taking out loans for higher amounts, up to about \$5000 and in rare cases more.
+
 ```{r}
 loans %>% ggplot(aes(x = sector)) + 
   geom_bar() +
   theme(axis.text.x = element_text(angle = 60, hjust = 1))
 ```
+
+Here we see that the number of loans varies across sector, with sectors such as agriculture, food, and retail attracting the highest number of loans, and other sectors such as entertainment and wholesale attracting relatively few loans.
+
 ```{r}
 loans %>% ggplot(aes(x = funded_yr)) + 
   geom_bar() +
   theme(axis.text.x = element_text(angle = 60, hjust = 1))
 ```
+
+Here we see that the number of loans (or the number of loans represented in this data set) increases each year starting in 2006-2007, with the exception of the year 2012, possibly due to the time of data collection (i.e. if the data was collected mid-2012, there would not be many loans from 2012 represented).
+
 ```{r}
 loans %>% ggplot(aes(x = location.country)) + 
   geom_bar() +
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 ```
-```{r}
-loans %>% ggplot(aes(x = status)) + 
-  geom_bar() +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1))
-```
-```{r}
-loans %>% ggplot(aes(x = partner_id)) + 
-  geom_bar() +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1))
-```
+
+This visualization shows us that the number of loans varies widely across different countries, with countries like Peru, Paraguay, and Burundi having a large quantity of loans taken out, and other countries relatively fewer.
 
 ```{r}
 loans %>% filter(scheduled_payments.count<500) %>% ggplot(aes(x = scheduled_payments.count)) + 
   geom_density() +
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 ```
-```{r}
-loans %>% ggplot(aes(x = scheduled_payments.avg_dollar_amount)) + 
-  geom_density() +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1))
-```
 
+This density plot shows us that the vast majority of loans are repayed in under 45-50 payments, with the mode at about 15 payments. The distribution is slightly right-skewed, meaning there is a small number of loans which were repayed in a large number of payments. 
 
 ```{r}
 loans %>% filter(sector == c("Food","Agriculture","Retail")) %>% 
   filter(scheduled_payments.count < 500) %>% 
   filter(is.na(scheduled_payments.count) == FALSE) %>% 
-  mutate(scheduled_payments.cat = cut(scheduled_payments.count, c(0,50,100,Inf))) %>% 
+  mutate(scheduled_payments.cat = cut(scheduled_payments.count, c(0,25,100,Inf))) %>% 
   ggplot(aes(y = funded_amount, x = sector, color = factor(scheduled_payments.cat))) +
   geom_boxplot()
 ```
+
+This visualization shows us how the funded amount changes based on the number of scheduled payments.  We have factored the number of scheduled payments into categories. We know from above that most loans are repayed in fewer than 25 payments, and this visualization tells us that the loans repayed in 25-100 payments tend to have smaller funded amounts than those repayed in fewer than 25 payments.  The funded amount seems to go back up when we look at the loans repayed in more than 100 payments, although there are relatively few of these.  We can also see from the visualization that lending is relatively similar across the three most popular loan sectors, with slightly more variation in the retail sector than the food and agriculture sectors for loans with a small number of scheduled payments.  We also see that, in the field of agriculture, the number of scheduled payments seems to have less of an effect on the funded amount than it does in the other two sectors.
+
+RQ 1: Across the most popular sectors, what impact does the number of scheduled payments have on the funded amount for the loan?
 
 ```{r}
 loans %>% filter(location.country == "Peru" | location.country == "Paraguay" |location.country == "Dominican Republic" |location.country == "Jordan" |location.country == "United States" ) %>% 
@@ -87,4 +87,11 @@ loans %>% filter(location.country == "Peru" | location.country == "Paraguay" |lo
   geom_boxplot() +
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 ```
+
+This visualization shows us that the impact of time on the funded amount varies across different countries.  For example, we cansee that the funded amount increases over time for countries such as the Dominican Republic and Paraguay, while it remains somewhat consistent for countries such as Peru and the United States.  The funded amount seems to have slightly decreased over time in Jordan.
+
+
+RQ 2: Considering countries with a large quantity of loans, how has the funded amount changed over time? Is this different in different countries?
+
+
 
