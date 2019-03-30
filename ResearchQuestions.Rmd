@@ -1,0 +1,85 @@
+---
+title: "Research Question"
+author: "Joseph Wriedt, Kevin Shin, Connor Thompson, Hiywot Tulu"
+date: "March 30, 2019"
+output: html_document
+---
+
+We choose to examine the Kiva dataset because we are interested in mirco lending.
+
+```{r echo = FALSE}
+library(readr)
+partners = read_csv("http://www.macalester.edu/~dshuman1/data/112/Kiva/partners2.csv")
+loans = read_csv("http://www.macalester.edu/~dshuman1/data/112/Kiva/loans.csv")
+```
+
+## Research Questions
+
+How 
+
+```{r}
+library(ggplot2)
+library(dplyr)
+```
+
+```{r}
+loans %>% 
+  ggplot(aes(x = funded_amount)) + 
+  geom_density()
+```
+
+```{r}
+loans %>% ggplot(aes(x = sector)) + 
+  geom_bar() +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1))
+```
+```{r}
+loans %>% ggplot(aes(x = funded_yr)) + 
+  geom_bar() +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1))
+```
+```{r}
+loans %>% ggplot(aes(x = location.country)) + 
+  geom_bar() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+```{r}
+loans %>% ggplot(aes(x = status)) + 
+  geom_bar() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+```{r}
+loans %>% ggplot(aes(x = partner_id)) + 
+  geom_bar() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+
+```{r}
+loans %>% filter(scheduled_payments.count<500) %>% ggplot(aes(x = scheduled_payments.count)) + 
+  geom_density() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+```{r}
+loans %>% ggplot(aes(x = scheduled_payments.avg_dollar_amount)) + 
+  geom_density() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+
+
+```{r}
+loans %>% filter(sector == c("Food","Agriculture","Retail")) %>% 
+  filter(scheduled_payments.count < 500) %>% 
+  filter(is.na(scheduled_payments.count) == FALSE) %>% 
+  mutate(scheduled_payments.cat = cut(scheduled_payments.count, c(0,50,100,Inf))) %>% 
+  ggplot(aes(y = funded_amount, x = sector, color = factor(scheduled_payments.cat))) +
+  geom_boxplot()
+```
+
+```{r}
+loans %>% filter(location.country == "Peru" | location.country == "Paraguay" |location.country == "Dominican Republic" |location.country == "Jordan" |location.country == "United States" ) %>% 
+  ggplot(aes(x = factor(funded_yr), y = funded_amount)) +
+    facet_wrap(~location.country)+
+  geom_boxplot() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+

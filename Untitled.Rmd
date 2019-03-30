@@ -1,6 +1,6 @@
 ---
 title: "Statistics Project"
-author: "Kevin Shin"
+author: "Kevin Shin, Connor Thompson, Hiywot Tulu, Joseph Wriedt"
 date: "3/30/2019"
 output: html_document
 ---
