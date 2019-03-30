@@ -7,8 +7,13 @@ output: html_document
 
 We choose to examine the Kiva dataset because we are interested in mirco lending.
 
-```{r echo = FALSE}
+```{r}
 library(readr)
+library(knitr)
+
+```
+
+```{r echo=TRUE, message = F, warning = F}
 partners = read_csv("http://www.macalester.edu/~dshuman1/data/112/Kiva/partners2.csv")
 loans = read_csv("http://www.macalester.edu/~dshuman1/data/112/Kiva/loans.csv")
 ```
