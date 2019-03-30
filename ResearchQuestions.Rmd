@@ -1,0 +1,18 @@
+---
+title: "Research Question"
+author: "Joseph Wriedt"
+date: "March 30, 2019"
+output: html_document
+---
+
+```{r}
+library(readr)
+partners = read_csv("http://www.macalester.edu/~dshuman1/data/112/Kiva/partners2.csv")
+loans = read_csv("http://www.macalester.edu/~dshuman1/data/112/Kiva/loans.csv")
+```
+What sectors in what countries typically borow the most and/or borrow most often?
+
+How has the number of loans or the amount of the dollars loaned changed over the years?  
+  Are people borrowing more now than before?
+
+Does the sector of industry affect how you split up the repayment of loans and its effect on defaults?
