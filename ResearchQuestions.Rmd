@@ -20,8 +20,6 @@ loans = read_csv("http://www.macalester.edu/~dshuman1/data/112/Kiva/loans.csv")
 
 ## Research Questions
 
-How 
-
 ```{r}
 library(ggplot2)
 library(dplyr)
@@ -71,7 +69,7 @@ This density plot shows us that the vast majority of loans are repayed in under 
 loans %>% filter(sector == c("Food","Agriculture","Retail")) %>% 
   filter(scheduled_payments.count < 500) %>% 
   filter(is.na(scheduled_payments.count) == FALSE) %>% 
-  mutate(scheduled_payments.cat = cut(scheduled_payments.count, c(0,25,100,Inf))) %>% 
+  mutate(scheduled_payments.cat = cut(scheduled_payments.count, c(-1,25,100,Inf))) %>% 
   ggplot(aes(y = funded_amount, x = sector, color = factor(scheduled_payments.cat))) +
   geom_boxplot()
 ```
@@ -82,6 +80,7 @@ RQ 1: Across the most popular sectors, what impact does the number of scheduled 
 
 ```{r}
 loans %>% filter(location.country == "Peru" | location.country == "Paraguay" |location.country == "Dominican Republic" |location.country == "Jordan" |location.country == "United States" ) %>% 
+  filter(!is.na(funded_yr)) %>% 
   ggplot(aes(x = factor(funded_yr), y = funded_amount)) +
     facet_wrap(~location.country)+
   geom_boxplot() +
