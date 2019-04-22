@@ -35,6 +35,8 @@ Our data has approximately 93000 cases, each of which represents one loan.  The 
 
 ##### Response Variable (The Same for both Research Questions)
 
+We first explore the distribution in the response variable we will be looking at throughout the report.
+
 ```{r}
 loans %>% 
   ggplot(aes(x = loan_amount)) + 
@@ -45,7 +47,7 @@ This visualization represents the distribution of our response variable, `loan_a
 
 ##### RQ 1: Across the most popular sectors, what impact does the number of scheduled payments have on the funded amount for the loan?
 
-For this question, the response varaible is `loan_amount`, a quantitative variable. The predictors are `sector` and `scheduled_payments.count`, both categorical variables.
+For this question, the response varaible is `loan_amount`, a quantitative variable. The predictors are `sector` and `scheduled_payments.count`, both categorical variables. In order to figure out which sectors we are most interested in, we plot the distribution of loans throughout different sectors.
 
 ```{r}
 loans %>% ggplot(aes(x = sector)) + 
@@ -55,6 +57,8 @@ loans %>% ggplot(aes(x = sector)) +
 
 Here we see that the number of loans varies across sector, with sectors such as agriculture, food, and retail attracting the highest number of loans, and other sectors such as entertainment and wholesale attracting relatively few loans.
 
+Next we want to examine the distribution in numbers of scheduled payments to see how borrowers are repaying their loans.
+
 ```{r}
 loans %>% filter(scheduled_payments.count<500) %>% ggplot(aes(x = scheduled_payments.count)) + 
   geom_density() +
@@ -63,6 +67,7 @@ loans %>% filter(scheduled_payments.count<500) %>% ggplot(aes(x = scheduled_paym
 
 This density plot shows us that the vast majority of loans are repayed in under 45-50 payments, with the mode at about 15 payments. The distribution is slightly right-skewed, meaning there is a small number of loans which were repayed in a large number of payments.
 
+Now, we create a visualization which allows us to see the variation in loan amounts, factored into different sectors (of the most common three) and into categories representing the number of scheduled payments.
 
 ```{r}
 loans %>% filter(sector == c("Food","Agriculture","Retail")) %>% 
@@ -70,14 +75,15 @@ loans %>% filter(sector == c("Food","Agriculture","Retail")) %>%
   filter(is.na(scheduled_payments.count) == FALSE) %>% 
   mutate(scheduled_payments.cat = cut(scheduled_payments.count, c(-1,25,100,Inf))) %>% 
   ggplot(aes(y = loan_amount, x = sector, color = factor(scheduled_payments.cat))) +
-  geom_boxplot()
+  geom_boxplot() +
+  labs(x = "Sector", y = "Loan Amount")
 ```
 
 This visualization shows us how the funded amount changes based on the number of scheduled payments.  We have factored the number of scheduled payments into categories. We know from above that most loans are repayed in fewer than 25 payments, and this visualization tells us that the loans repayed in 25-100 payments tend to have smaller funded amounts than those repayed in fewer than 25 payments.  The funded amount seems to go back up when we look at the loans repayed in more than 100 payments, although there are relatively few of these.  We can also see from the visualization that lending is relatively similar across the three most popular loan sectors, with slightly more variation in the retail sector than the food and agriculture sectors for loans with a small number of scheduled payments.  We also see that, in the field of agriculture, the number of scheduled payments seems to have less of an effect on the funded amount than it does in the other two sectors.
 
 ##### RQ 2: Considering countries with a large quantity of loans, how has the funded amount changed over time? Is this different in different countries?
 
-For this question, the response varaible is `loan_amount` again. The predictors are two categorical variables, `funded_yr` and `location.country`.
+For this question, the response varaible is `loan_amount` again. The predictors are two categorical variables, `funded_yr` and `location.country`.  We first examine the number of loans as a function of the beginning year of the loan.
 
 ```{r}
 loans %>% ggplot(aes(x = funded_yr)) + 
@@ -87,6 +93,8 @@ loans %>% ggplot(aes(x = funded_yr)) +
 
 Here we see that the number of loans (or the number of loans represented in this data set) increases each year starting in 2006-2007, with the exception of the year 2012, possibly due to the time of data collection (i.e. if the data was collected mid-2012, there would not be many loans from 2012 represented).
 
+Next we examine the number of loans in each country in order to see which countries tend to take out more loans than others.
+
 ```{r}
 loans %>% ggplot(aes(x = location.country)) + 
   geom_bar() +
@@ -95,6 +103,7 @@ loans %>% ggplot(aes(x = location.country)) +
 
 This visualization shows us that the number of loans varies widely across different countries, with countries like Peru, Paraguay, and Burundi having a large quantity of loans taken out, and other countries relatively fewer.
 
+Finally, we will create a visualization that allows us to examine the change in loan amount over time across different countries which take out a relatively large quantity of loans.
 
 ```{r}
 loans %>% filter(location.country == "Peru" | location.country == "Paraguay" |location.country == "Dominican Republic" |location.country == "Jordan" |location.country == "United States" ) %>% 
@@ -102,7 +111,8 @@ loans %>% filter(location.country == "Peru" | location.country == "Paraguay" |lo
   ggplot(aes(x = factor(funded_yr), y = loan_amount)) +
     facet_wrap(~location.country)+
   geom_boxplot() +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(x = "Loan Year", y = "Loan Amount")
 ```
 
 This visualization shows us that the impact of time on the funded amount varies across different countries.  For example, we cansee that the funded amount increases over time for countries such as the Dominican Republic and Paraguay, while it remains somewhat consistent for countries such as Peru and the United States.  The funded amount seems to have slightly decreased over time in Jordan.

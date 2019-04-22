@@ -1,0 +1,79 @@
+---
+title: "Project Phase 2"
+author: "Connor Thompson, Joseph Wriedt, Hiywot Tulu, Kevin Shin"
+date: "April 20, 2019"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r message = F, warning = F}
+library(readr)
+library(knitr)
+library(ggplot2)
+library(dplyr)
+```
+
+```{r include = F, message = F, warning = F}
+loans = read_csv("http://www.macalester.edu/~dshuman1/data/112/Kiva/loans.csv")
+```
+
+
+## The Dataset
+
+Our data has approximately 93000 cases, each of which represents one loan.  The variables we are considering are as follows:
+
+ - `loan_amount`
+ - `sector`
+ - `scheduled_payments.count`
+ - `funded_yr`
+ - `location.country`
+
+## Research Questions
+
+1. Across the most popular sectors, what is the relationship between the number of scheduled payments and the funded amount for the loan?
+
+2. Considering countries with a large quantity of loans, how has the funded amount changed over time? Is this different in different countries?
+
+## Filtering the Dataset
+
+```{r}
+e1 <- loans %>% ggplot(aes(x = sector)) + 
+  geom_bar() +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1))
+
+e2 <- loans %>% ggplot(aes(x = location.country)) + 
+  geom_bar() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+grid.arrange(e1,e2,ncols=2)
+```
+
+
+
+## The First Model
+
+```{r, echo=F, warning=F}
+loans %>% filter(sector == c("Food","Agriculture","Retail")) %>% 
+  filter(scheduled_payments.count < 500) %>% 
+  filter(is.na(scheduled_payments.count) == FALSE) %>% 
+  mutate(scheduled_payments.cat = cut(scheduled_payments.count, c(-1,25,100,Inf))) %>% 
+  ggplot(aes(y = loan_amount, x = sector, color = factor(scheduled_payments.cat))) +
+  geom_boxplot() +
+  labs(x = "Sector", y = "Loan Amount")
+```
+
+## The Second Model
+
+```{r}
+loans %>% filter(location.country == "Peru" | location.country == "Paraguay" |location.country == "Dominican Republic" |location.country == "Jordan" |location.country == "United States" ) %>% 
+  filter(!is.na(funded_yr)) %>% 
+  ggplot(aes(x = factor(funded_yr), y = loan_amount)) +
+    facet_wrap(~location.country)+
+  geom_boxplot() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(x = "Loan Year", y = "Loan Amount")
+```
+
